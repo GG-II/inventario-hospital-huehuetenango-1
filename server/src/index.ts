@@ -3,6 +3,8 @@ import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import equiposRoutes from './routes/equipos';
+import trasladosRoutes from './routes/traslados'; 
+import bajasRoutes from './routes/bajas'; 
 
 dotenv.config();
 
@@ -49,6 +51,8 @@ server.get('/', async (request, reply) => {
 // REGISTRAR RUTAS DE AUTENTICACIÓN ← AGREGAR ESTAS LÍNEAS
 server.register(authRoutes, { prefix: '/api/auth' });
 server.register(equiposRoutes, { prefix: '/api/equipos' }); 
+server.register(trasladosRoutes, { prefix: '/api/traslados' });
+server.register(bajasRoutes, { prefix: '/api/bajas' });
 
 // Iniciar servidor
 const start = async () => {
