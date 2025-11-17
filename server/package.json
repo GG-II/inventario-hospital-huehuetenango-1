@@ -1,0 +1,37 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Sistema web para la gestión de equipos médicos y mobiliario del Hospital Regional de Huehuetenango \"Dr. Jorge Vides Molina\".",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@libsql/client": "^0.15.15",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.37.0",
+    "fastify": "^5.2.1",
+    "@fastify/cors": "^10.0.1",
+    "@fastify/jwt": "^9.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^24.9.2",
+    "drizzle-kit": "^0.31.6",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
