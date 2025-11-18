@@ -16,6 +16,7 @@ import { BajaForm } from './pages/bajas/BajaForm';
 import { BajaDetail } from './pages/bajas/BajaDetail';
 import { AreasList } from './pages/catalogos/AreasList';
 import { ProveedoresList } from './pages/catalogos/ProveedoresList';
+import { UsuariosList } from './pages/usuarios/UsuariosList';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
                     <Route path="/bajas/:id" element={<BajaDetail />} />
                     <Route path="/catalogos/areas" element={<AreasList />} />
                     <Route path="/catalogos/proveedores" element={<ProveedoresList />} />
+                    <Route path="/usuarios" element={<UsuariosList />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </Layout>

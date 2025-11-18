@@ -8,6 +8,7 @@ import trasladosRoutes from './routes/traslados';
 import bajasRoutes from './routes/bajas';
 import reportesRoutes from './routes/reportes'; 
 import catalogosRoutes from './routes/catalogos';  // ← AGREGAR
+import usuariosRoutes from './routes/usuarios';
 
 dotenv.config();
 
@@ -65,6 +66,7 @@ server.register(trasladosRoutes, { prefix: '/api/traslados' });
 server.register(bajasRoutes, { prefix: '/api/bajas' });
 server.register(reportesRoutes, { prefix: '/api/reportes' });
 server.register(catalogosRoutes, { prefix: '/api/catalogos' });  // ← AGREGAR
+server.register(usuariosRoutes, { prefix: '/api/usuarios' });
 
 // Iniciar servidor
 const start = async () => {
