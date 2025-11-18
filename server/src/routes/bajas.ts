@@ -178,4 +178,5 @@ const bajasRoutes: FastifyPluginAsync = async (fastify) => {
   );
 };
 
+
 export default bajasRoutes;

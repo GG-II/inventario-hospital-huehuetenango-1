@@ -11,6 +11,9 @@ import { EquipoHistorial } from './pages/equipos/EquipoHistorial';
 import { TrasladosList } from './pages/traslados/TrasladosList';
 import { TrasladoForm } from './pages/traslados/TrasladoForm';
 import { TrasladoDetail } from './pages/traslados/TrasladoDetail';
+import { BajasList } from './pages/bajas/BajasList';
+import { BajaForm } from './pages/bajas/BajaForm';
+import { BajaDetail } from './pages/bajas/BajaDetail';
 
 function App() {
   return (
@@ -33,6 +36,9 @@ function App() {
                     <Route path="/traslados" element={<TrasladosList />} />
                     <Route path="/traslados/nuevo" element={<TrasladoForm />} />
                     <Route path="/traslados/:id" element={<TrasladoDetail />} />
+                    <Route path="/bajas/nueva" element={<BajaForm />} />
+                    <Route path="/bajas" element={<BajasList />} />
+                    <Route path="/bajas/:id" element={<BajaDetail />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </Layout>
