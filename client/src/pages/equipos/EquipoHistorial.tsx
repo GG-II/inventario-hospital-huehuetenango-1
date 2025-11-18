@@ -16,22 +16,12 @@ interface MovimientoHistorial {
   observaciones?: string;
 }
 
-interface AuditoriaHistorial {
-  id: number;
-  accion: string;
-  tabla: string;
-  datosAntes?: any;
-  datosDespues?: any;
-  usuario: { nombre: string };
-  createdAt: string;
-}
 
 export function EquipoHistorial() {
   const navigate = useNavigate();
   const { id } = useParams();
 
   const [movimientos, setMovimientos] = useState<MovimientoHistorial[]>([]);
-  const [auditoria, setAuditoria] = useState<AuditoriaHistorial[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [codigoEquipo, setCodigoEquipo] = useState('');
@@ -51,7 +41,6 @@ export function EquipoHistorial() {
       // Cargar historial
       const historial = await equipoService.obtenerHistorial(Number(id));
       setMovimientos(historial.movimientos || []);
-      setAuditoria(historial.auditoria || []);
     } catch (err: any) {
       setError(err.message || 'Error al cargar historial');
     } finally {
@@ -67,17 +56,6 @@ export function EquipoHistorial() {
       hour: '2-digit',
       minute: '2-digit',
     });
-  };
-
-  const getAccionColor = (accion: string) => {
-    const colores: Record<string, string> = {
-      CREATE: 'bg-green-100 text-green-800',
-      UPDATE: 'bg-blue-100 text-blue-800',
-      DELETE: 'bg-red-100 text-red-800',
-      TRASLADO: 'bg-purple-100 text-purple-800',
-      BAJA: 'bg-orange-100 text-orange-800',
-    };
-    return colores[accion] || 'bg-gray-100 text-gray-800';
   };
 
   if (isLoading) {
@@ -180,65 +158,6 @@ export function EquipoHistorial() {
         </CardBody>
       </Card>
 
-      {/* Auditoría */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">
-              Registro de Cambios (Auditoría)
-            </h2>
-            <span className="text-sm text-neutral-600">
-              {auditoria.length} registros
-            </span>
-          </div>
-        </CardHeader>
-        <CardBody className="p-0">
-          {auditoria.length === 0 ? (
-            <div className="p-12 text-center">
-              <Icons.FileText className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
-              <p className="text-neutral-600">No hay cambios registrados</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-neutral-200">
-              {auditoria.map((audit) => (
-                <div key={audit.id} className="p-6 hover:bg-neutral-50">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <span className={`badge ${getAccionColor(audit.accion)}`}>
-                          {audit.accion}
-                        </span>
-                        <span className="text-sm text-neutral-600">
-                          en {audit.tabla}
-                        </span>
-                      </div>
-                      
-                      {audit.datosDespues && (
-                        <div className="mt-3 text-sm">
-                          <p className="text-neutral-600 mb-1">Cambios realizados:</p>
-                          <div className="bg-neutral-50 rounded p-3 font-mono text-xs">
-                            <pre className="whitespace-pre-wrap">
-                              {JSON.stringify(audit.datosDespues, null, 2)}
-                            </pre>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="text-right ml-4">
-                      <p className="text-sm text-neutral-900">
-                        {audit.usuario.nombre}
-                      </p>
-                      <p className="text-xs text-neutral-600">
-                        {formatoFecha(audit.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardBody>
-      </Card>
     </div>
   );
 }

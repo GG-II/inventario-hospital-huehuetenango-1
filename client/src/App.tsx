@@ -8,6 +8,9 @@ import { EquiposList } from './pages/equipos/EquiposList';  // ← AGREGAR
 import { EquipoForm } from './pages/equipos/EquipoForm';
 import { EquipoDetail } from './pages/equipos/EquipoDetail';
 import { EquipoHistorial } from './pages/equipos/EquipoHistorial';
+import { TrasladosList } from './pages/traslados/TrasladosList';
+import { TrasladoForm } from './pages/traslados/TrasladoForm';
+import { TrasladoDetail } from './pages/traslados/TrasladoDetail';
 
 function App() {
   return (
@@ -27,6 +30,9 @@ function App() {
                     <Route path="/equipos/:id/editar" element={<EquipoForm />} /> 
                     <Route path="/equipos/:id" element={<EquipoDetail />} />
                     <Route path="/equipos/:id/historial" element={<EquipoHistorial />} />
+                    <Route path="/traslados" element={<TrasladosList />} />
+                    <Route path="/traslados/nuevo" element={<TrasladoForm />} />
+                    <Route path="/traslados/:id" element={<TrasladoDetail />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </Layout>

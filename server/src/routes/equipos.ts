@@ -314,7 +314,8 @@ const equiposRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
-  // GET /api/equipos/:id/historial - Obtener historial
+
+// GET /api/equipos/:id/historial - Obtener historial
 fastify.get<{ Params: { id: string } }>(
   '/:id/historial',
   {
@@ -334,16 +335,109 @@ fastify.get<{ Params: { id: string } }>(
         });
       }
 
-      // Por ahora retornamos arrays vacíos
-      // TODO: Implementar consultas reales cuando tengas movimientos y auditoría
+      // Importar db y schemas necesarios
+      const { db } = await import('../config/database');
+      const { movimientos } = await import('../db/schema/movimientos');
+      const { auditoria } = await import('../db/schema/auditoria');
+      const { areas } = await import('../db/schema/catalogos');
+      const { usuarios } = await import('../db/schema/usuarios');
+      const { eq } = await import('drizzle-orm');
+
+      // Obtener movimientos (traslados)
+      const movimientosData = await db
+        .select({
+          id: movimientos.id,
+          tipo: movimientos.tipo,
+          folioConocimiento: movimientos.folioConocimiento,
+          fechaMovimiento: movimientos.fechaMovimiento,
+          observaciones: movimientos.observaciones,
+          areaOrigenId: movimientos.areaOrigenId,
+          areaDestinoId: movimientos.areaDestinoId,
+          usuarioId: movimientos.usuarioId,
+        })
+        .from(movimientos)
+        .where(eq(movimientos.equipoId, id))
+        .orderBy(movimientos.fechaMovimiento);
+
+      // Obtener datos relacionados de áreas y usuarios para movimientos
+      const movimientosCompletos = await Promise.all(
+        movimientosData.map(async (mov) => {
+          const [areaOrigen, areaDestino, usuario] = await Promise.all([
+            db.select().from(areas).where(eq(areas.id, mov.areaOrigenId)).limit(1),
+            db.select().from(areas).where(eq(areas.id, mov.areaDestinoId)).limit(1),
+            db.select().from(usuarios).where(eq(usuarios.id, mov.usuarioId)).limit(1),
+          ]);
+
+          return {
+            id: mov.id,
+            tipo: mov.tipo,
+            folioConocimiento: mov.folioConocimiento,
+            fechaMovimiento: mov.fechaMovimiento,
+            observaciones: mov.observaciones,
+            areaOrigen: {
+              id: areaOrigen[0].id,
+              nombre: areaOrigen[0].nombre,
+            },
+            areaDestino: {
+              id: areaDestino[0].id,
+              nombre: areaDestino[0].nombre,
+            },
+            usuario: {
+              id: usuario[0].id,
+              nombre: usuario[0].nombre,
+            },
+          };
+        })
+      );
+
+      // Obtener registros de auditoría
+      const auditoriaData = await db
+        .select({
+          id: auditoria.id,
+          accion: auditoria.accion,
+          tabla: auditoria.tabla,
+          datosAntes: auditoria.datosAntes,
+          datosDespues: auditoria.datosDespues,
+          createdAt: auditoria.createdAt,
+          usuarioId: auditoria.usuarioId,
+        })
+        .from(auditoria)
+        .where(eq(auditoria.registroId, id))
+        .orderBy(auditoria.createdAt);
+
+      // Obtener datos de usuarios para auditoría
+      const auditoriaCompleta = await Promise.all(
+        auditoriaData.map(async (audit) => {
+          const usuario = await db
+            .select()
+            .from(usuarios)
+            .where(eq(usuarios.id, audit.usuarioId))
+            .limit(1);
+
+          return {
+            id: audit.id,
+            accion: audit.accion,
+            tabla: audit.tabla,
+            datosAntes: audit.datosAntes ? JSON.parse(audit.datosAntes) : null,
+            datosDespues: audit.datosDespues ? JSON.parse(audit.datosDespues) : null,
+            createdAt: audit.createdAt,
+            usuario: {
+              id: usuario[0].id,
+              nombre: usuario[0].nombre,
+            },
+          };
+        })
+      );
+
       return reply.send({
         success: true,
         data: {
-          movimientos: [],
-          auditoria: [],
+          movimientos: movimientosCompletos,
+          auditoria: auditoriaCompleta,
         },
       });
     } catch (error) {
+      console.error('Error al obtener historial:', error);
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       
       return reply.code(500).send({
