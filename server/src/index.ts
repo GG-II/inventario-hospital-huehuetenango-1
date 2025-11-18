@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import multipart from '@fastify/multipart';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import equiposRoutes from './routes/equipos';
@@ -27,6 +28,13 @@ const PORT = parseInt(process.env.PORT || '3000', 10);
 // Registrar CORS
 server.register(cors, {
   origin: true, // En desarrollo aceptar todos los orígenes
+});
+
+// Registrar multipart para uploads
+server.register(multipart, {
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
 });
 
 // Health check endpoint

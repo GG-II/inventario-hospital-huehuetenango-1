@@ -72,3 +72,69 @@ body {
     @apply bg-white border border-neutral-200 rounded shadow-sm;
   }
 }
+
+/* Tablas */
+.table {
+  @apply w-full border-collapse;
+}
+
+.table thead {
+  @apply bg-neutral-50 border-b-2 border-neutral-200;
+}
+
+.table th {
+  @apply px-6 py-4 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider whitespace-nowrap;
+}
+
+.table td {
+  @apply px-6 py-4 text-sm text-neutral-900 border-b border-neutral-100;
+}
+
+.table tbody tr {
+  @apply transition-colors;
+}
+
+.table tbody tr:hover {
+  @apply bg-neutral-50;
+}
+
+/* Estilos de impresión */
+@media print {
+  /* Ocultar elementos innecesarios */
+  nav,
+  aside,
+  .no-print,
+  button,
+  header button {
+    display: none !important;
+  }
+
+  /* Ajustar layout */
+  body {
+    background: white !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Asegurar que las cards se vean bien */
+  .card {
+    page-break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #e5e5e5 !important;
+  }
+
+  /* Evitar saltos de página en medio de secciones */
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+}
+
+/* Clase para elementos que no deben imprimirse */
+.no-print {
+  @media print {
+    display: none !important;
+  }
+}
