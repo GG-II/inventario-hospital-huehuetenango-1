@@ -17,6 +17,7 @@ import { BajaDetail } from './pages/bajas/BajaDetail';
 import { AreasList } from './pages/catalogos/AreasList';
 import { ProveedoresList } from './pages/catalogos/ProveedoresList';
 import { UsuariosList } from './pages/usuarios/UsuariosList';
+import { ReportesList } from './pages/reportes/ReportesList';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
                     <Route path="/catalogos/areas" element={<AreasList />} />
                     <Route path="/catalogos/proveedores" element={<ProveedoresList />} />
                     <Route path="/usuarios" element={<UsuariosList />} />
+                    <Route path="/reportes" element={<ReportesList />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </Layout>
