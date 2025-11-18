@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
+import { reporteService } from '../../services/reporteService';
 import { catalogoService } from '../../services/catalogoService';
 import { Area } from '../../types/equipo';
 import { Card, CardHeader, CardBody } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
 import { Icons } from '../../components/common/Icon';
-import api from '../../services/api';
 
 export function ReportesList() {
   const [areas, setAreas] = useState<Area[]>([]);
@@ -32,22 +32,24 @@ export function ReportesList() {
       setError('');
       setSuccess('');
 
-      const response = await api.get('/reportes/inventario', {
-        responseType: 'blob',
-      });
+      // Llamar al endpoint correcto que genera el PDF
+      const blob = await reporteService.descargarInventarioPDF();
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      // Crear URL del blob y descargarlo
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `inventario-${new Date().toISOString().split('T')[0]}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
+      window.URL.revokeObjectURL(url);
 
       setSuccess('Reporte descargado exitosamente');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
-      setError('Error al descargar el reporte de inventario');
+      console.error('Error al descargar inventario:', err);
+      setError(err.response?.data?.error?.message || 'Error al descargar el reporte de inventario');
     } finally {
       setIsLoading(false);
     }
@@ -64,23 +66,28 @@ export function ReportesList() {
       setError('');
       setSuccess('');
 
-      const response = await api.get(`/reportes/tarjeta/${areaSeleccionada}`, {
-        responseType: 'blob',
-      });
+      // Llamar al endpoint correcto que genera el PDF
+      const blob = await reporteService.descargarTarjetaPDF(areaSeleccionada);
 
+      // Crear URL del blob y descargarlo
       const area = areas.find(a => a.id === areaSeleccionada);
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `tarjeta-${area?.nombre || 'area'}-${new Date().toISOString().split('T')[0]}.pdf`);
+      link.setAttribute(
+        'download',
+        `tarjeta-${area?.nombre.replace(/\s+/g, '-') || 'area'}-${new Date().toISOString().split('T')[0]}.pdf`
+      );
       document.body.appendChild(link);
       link.click();
       link.remove();
+      window.URL.revokeObjectURL(url);
 
       setSuccess('Tarjeta de responsabilidad descargada exitosamente');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
-      setError('Error al descargar la tarjeta de responsabilidad');
+      console.error('Error al descargar tarjeta:', err);
+      setError(err.response?.data?.error?.message || 'Error al descargar la tarjeta de responsabilidad');
     } finally {
       setIsLoading(false);
     }
@@ -132,8 +139,17 @@ export function ReportesList() {
               variant="primary"
               className="flex items-center space-x-2"
             >
-              <Icons.Package className="w-4 h-4" />
-              <span>{isLoading ? 'Generando...' : 'Descargar Reporte'}</span>
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Generando...</span>
+                </>
+              ) : (
+                <>
+                  <Icons.Package className="w-4 h-4" />
+                  <span>Descargar Reporte</span>
+                </>
+              )}
             </Button>
             <span className="text-sm text-neutral-600">
               Formato: PDF • Fecha: {new Date().toLocaleDateString('es-GT')}
@@ -190,8 +206,17 @@ export function ReportesList() {
                 variant="primary"
                 className="flex items-center space-x-2"
               >
-                <Icons.Building2 className="w-4 h-4" />
-                <span>{isLoading ? 'Generando...' : 'Descargar Tarjeta'}</span>
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Generando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Icons.Building2 className="w-4 h-4" />
+                    <span>Descargar Tarjeta</span>
+                  </>
+                )}
               </Button>
               {areaSeleccionada > 0 && (
                 <span className="text-sm text-neutral-600">
