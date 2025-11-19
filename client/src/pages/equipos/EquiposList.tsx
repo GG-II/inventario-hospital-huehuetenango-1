@@ -7,6 +7,7 @@ import { Card, CardBody } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
 import { Icons } from '../../components/common/Icon';
+import { QRScanner } from '../../components/common/QRScanner';
 
 export function EquiposList() {
   const navigate = useNavigate();
@@ -29,6 +30,9 @@ export function EquiposList() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+
+  // Estado del escáner QR
+  const [showQRScanner, setShowQRScanner] = useState(false);
 
   useEffect(() => {
     cargarCatalogos();
@@ -121,20 +125,30 @@ export function EquiposList() {
             Gestión de equipos médicos y mobiliario
           </p>
         </div>
-        <Button
-          onClick={() => navigate('/equipos/nuevo')}
-          variant="primary"
-          className="flex items-center space-x-2"
-        >
-          <Icons.Package className="w-4 h-4" />
-          <span>Nuevo Equipo</span>
-        </Button>
+        <div className="flex items-center space-x-3">
+          <Button
+            onClick={() => setShowQRScanner(true)}
+            variant="secondary"
+            className="flex items-center space-x-2"
+          >
+            <Icons.Package className="w-4 h-4" />
+            <span>Escanear QR</span>
+          </Button>
+          <Button
+            onClick={() => navigate('/equipos/nuevo')}
+            variant="primary"
+            className="flex items-center space-x-2"
+          >
+            <Icons.Package className="w-4 h-4" />
+            <span>Nuevo Equipo</span>
+          </Button>
+        </div>
       </div>
 
       {/* Filtros */}
       <Card>
         <CardBody className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">  {/* Cambiar de 5 a 6 columnas */}
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
             {/* Búsqueda */}
             <div className="md:col-span-2">
               <Input
@@ -183,7 +197,7 @@ export function EquiposList() {
               </select>
             </div>
 
-            {/* Subgrupo - AGREGAR ESTO */}
+            {/* Subgrupo */}
             <div>
               <select
                 value={subgrupoId || ''}
@@ -247,76 +261,76 @@ export function EquiposList() {
             <>
               <div className="overflow-x-auto">
                 <table className="table">
-                    <thead>
+                  <thead>
                     <tr>
-                        <th className="w-32">Código SICOIN</th>
-                        <th className="min-w-[300px]">Descripción</th>
-                        <th className="w-40">Área</th>
-                        <th className="w-32">Estado</th>
-                        <th className="w-32">Precio</th>
-                        <th className="w-40 text-right">Acciones</th>
+                      <th className="w-32">Código SICOIN</th>
+                      <th className="min-w-[300px]">Descripción</th>
+                      <th className="w-40">Área</th>
+                      <th className="w-32">Estado</th>
+                      <th className="w-32">Precio</th>
+                      <th className="w-40 text-right">Acciones</th>
                     </tr>
-                    </thead>
-                    <tbody>
+                  </thead>
+                  <tbody>
                     {equipos.map((equipo) => (
-                        <tr key={equipo.id} className="hover:bg-neutral-50">
+                      <tr key={equipo.id} className="hover:bg-neutral-50">
                         <td className="align-top">
-                            <span className="font-mono text-sm font-medium text-neutral-900">
+                          <span className="font-mono text-sm font-medium text-neutral-900">
                             {equipo.codigoSICOIN}
-                            </span>
+                          </span>
                         </td>
                         <td className="align-top">
-                            <div>
+                          <div>
                             <p className="font-medium text-neutral-900 mb-1">
-                                {equipo.descripcion}
+                              {equipo.descripcion}
                             </p>
                             {equipo.marca && (
-                                <p className="text-sm text-neutral-600">
+                              <p className="text-sm text-neutral-600">
                                 {equipo.marca} {equipo.modelo && `- ${equipo.modelo}`}
-                                </p>
+                              </p>
                             )}
-                            </div>
+                          </div>
                         </td>
                         <td className="align-top">
-                            <span className="text-sm text-neutral-700">
+                          <span className="text-sm text-neutral-700">
                             {equipo.area.nombre}
-                            </span>
+                          </span>
                         </td>
                         <td className="align-top">
-                            <span className={`badge ${getEstadoColor(equipo.estado.color)}`}>
+                          <span className={`badge ${getEstadoColor(equipo.estado.color)}`}>
                             {equipo.estado.nombre}
-                            </span>
+                          </span>
                         </td>
                         <td className="align-top">
-                            <span className="font-medium text-neutral-900 whitespace-nowrap">
+                          <span className="font-medium text-neutral-900 whitespace-nowrap">
                             {formatoPrecio(equipo.precioUnitario)}
-                            </span>
+                          </span>
                         </td>
                         <td className="align-top text-right">
-                            <div className="flex items-center justify-end space-x-2">
+                          <div className="flex items-center justify-end space-x-2">
                             <Button
-                                onClick={() => navigate(`/equipos/${equipo.id}`)}
-                                variant="ghost"
-                                size="sm"
-                                title="Ver detalles"
+                              onClick={() => navigate(`/equipos/${equipo.id}`)}
+                              variant="ghost"
+                              size="sm"
+                              title="Ver detalles"
                             >
-                                Ver
+                              Ver
                             </Button>
                             <Button
-                                onClick={() => navigate(`/equipos/${equipo.id}/editar`)}
-                                variant="ghost"
-                                size="sm"
-                                title="Editar equipo"
+                              onClick={() => navigate(`/equipos/${equipo.id}/editar`)}
+                              variant="ghost"
+                              size="sm"
+                              title="Editar equipo"
                             >
-                                Editar
+                              Editar
                             </Button>
-                            </div>
+                          </div>
                         </td>
-                        </tr>
+                      </tr>
                     ))}
-                    </tbody>
+                  </tbody>
                 </table>
-                </div>
+              </div>
 
               {/* Paginación */}
               <div className="px-6 py-4 border-t border-neutral-200 flex items-center justify-between">
@@ -349,6 +363,11 @@ export function EquiposList() {
           )}
         </CardBody>
       </Card>
+
+      {/* Modal de escáner QR */}
+      {showQRScanner && (
+        <QRScanner onClose={() => setShowQRScanner(false)} />
+      )}
     </div>
   );
 }
